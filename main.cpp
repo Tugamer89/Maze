@@ -1,27 +1,31 @@
 #include <iostream>
 #include "drawer.h"
+#include "maze.h"
 
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    string title = "Some cool tests";
-    sf::RenderWindow* windowPtr = drawer::initializeScreen(800, 600, title);
+    Drawer drawer(400, 400, "Maze generator");
+    Maze maze(20, 20);
     
+    cerr << endl;
+
+    maze.generate();
+    cerr << "DEBUG > Maze generated!" << endl;
+
     /*  GAME LOOP */
-    while (windowPtr->isOpen()) {
-        drawer::eventHandler(windowPtr);
+    while (drawer.window->isOpen()) {
+        drawer.eventHandler();
 
-        sf::Vector2u windowSize = windowPtr->getSize();
+        sf::Vector2u windowSize = drawer.window->getSize();
         sf::Vector2u center{windowSize.x/2, windowSize.y/2};
-        sf::Vector2i mousePos = sf::Mouse::getPosition(*windowPtr);
+        sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
 
-        // Draw everything
-        drawer::clearScreen(windowPtr, sf::Color::White);
-        drawer::drawRectangle(windowPtr, {center.x - windowSize.x*.02, center.y - windowSize.y*.02}, {center.x + windowSize.x*.02, center.y + windowSize.y*.02}, sf::Color::Magenta);
-        drawer::drawSegment(windowPtr, {0, mousePos.y}, {windowSize.x, mousePos.y}, sf::Color::Black);
-        drawer::drawSegment(windowPtr, {mousePos.x, 0}, {mousePos.x, windowSize.y}, sf::Color::Black);
-
-        windowPtr->display();
+        // Draw & Display
+        drawer.clearScreen(sf::Color::White);
+        maze.draw(drawer, sf::Color::Black, sf::Color::Transparent);
+        
+        drawer.window->display();
     }
 
     return 0;

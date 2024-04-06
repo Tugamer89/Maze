@@ -2,12 +2,17 @@
 
 using namespace std;
 
-sf::RenderWindow* drawer::initializeScreen(unsigned int width, unsigned int height, const std::string& title) {
-    sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode(width, height), title);
-    return window;
+Drawer::Drawer(unsigned int width, unsigned int height, const std::string& title_) {
+    windowSize = {width, height};
+    title = title_;
+    window = new sf::RenderWindow(sf::VideoMode(width, height), title);
 }
 
-void drawer::eventHandler(sf::RenderWindow*& window, const std::string& title) {
+Drawer::~Drawer() {
+    delete window;
+}
+
+void Drawer::eventHandler() {
     sf::Event event;
         
     while (window->pollEvent(event)) {
@@ -18,7 +23,7 @@ void drawer::eventHandler(sf::RenderWindow*& window, const std::string& title) {
 
         case sf::Event::KeyPressed:
             if (event.key.code == sf::Keyboard::F11)
-                toggleFullscreen(window, title);
+                toggleFullscreen();
             break;
 
         case sf::Event::Resized:
@@ -34,20 +39,20 @@ void drawer::eventHandler(sf::RenderWindow*& window, const std::string& title) {
     }
 }
 
-void drawer::toggleFullscreen(sf::RenderWindow*& window, const std::string& title) {
+void Drawer::toggleFullscreen() {
     bool isFullscreen = window->isOpen() && window->getSize() == sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
     window->close();
     if (!isFullscreen)
         window->create(sf::VideoMode::getDesktopMode(), title, sf::Style::Fullscreen);
     else
-        window->create(sf::VideoMode(800, 600), title, sf::Style::Default);
+        window->create(sf::VideoMode(windowSize.x, windowSize.y), title, sf::Style::Default);
 }
 
-void drawer::clearScreen(sf::RenderWindow*& window, sf::Color color) {
+void Drawer::clearScreen(sf::Color color) {
     window->clear(color);
 }
 
-void drawer::drawSegment(sf::RenderWindow*& window, const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color) {
+void Drawer::drawSegment(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color) {
     sf::VertexArray line(sf::Lines, 2);
 
     line[0].position = sf::Vector2f(p1.x, p1.y);
@@ -58,7 +63,7 @@ void drawer::drawSegment(sf::RenderWindow*& window, const sf::Vector2u& p1, cons
     window->draw(line);
 }
 
-void drawer::drawRectangle(sf::RenderWindow*& window, const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color) {
+void Drawer::drawRectangle(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color) {
     double width = abs((int)p1.x - (int)p2.x);
     double height = abs((int)p1.y - (int)p2.y);
 
