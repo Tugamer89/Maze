@@ -1,6 +1,8 @@
 #pragma once
-#include <iostream>
-#include <SFML/Graphics.hpp>
+#include "global.h"
+
+class Player;
+class Maze;
 
 class Drawer {
 private:
@@ -14,8 +16,9 @@ public:
     ~Drawer();
     
     void toggleFullscreen();
-    void eventHandler();
+    void eventHandler(Maze& maze, Player& player);
     void clearScreen(sf::Color color = sf::Color::White);
-    void drawSegment(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color = sf::Color(0, 0, 0, 0));
-    void drawRectangle(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color = sf::Color(0, 0, 0, 0));
+    void drawSegment(const sf::Vector2f& p1, const sf::Vector2f& p2, sf::Color color = sf::Color::Transparent);
+    void drawRectangle(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color = sf::Color::Transparent);
+    void drawCircle(const sf::Vector2f& center, unsigned int radius, sf::Color color = sf::Color::Transparent);
 };

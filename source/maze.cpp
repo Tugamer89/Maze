@@ -69,27 +69,31 @@ void Maze::removeWalls(Cell* c1, Cell* c2) {
 }
 
 /* https://en.wikipedia.org/wiki/Maze_generation_algorithm#Iterative_implementation_(with_stack) */
-void Maze::generate() {
-    vector<Cell*> stack;
+void Maze::generate(Drawer& drawer) {
+    stack<Cell*> stack;
 
     maze[0].visited = true;
-    stack.push_back(&maze[0]);
+    stack.push(&maze[0]);
 
     while (!stack.empty()) {
-        Cell* current = stack.back();
+        Cell* current = stack.top();
         Cell* choosen = nullptr;
         
         if (randomNeighbor(current->coord, choosen)) {
             removeWalls(current, choosen);
             choosen->visited = true;
-            stack.push_back(choosen);
+            stack.push(choosen);
         }
         else
-            stack.pop_back();
+            stack.pop();
     }
+
+    calculateWalls(drawer);
 }
 
-void Maze::draw(Drawer& drawer, sf::Color wallColor, sf::Color cellColor) {
+void Maze::calculateWalls(Drawer& drawer) {
+    walls.clear();
+
     sf::Vector2u windowSize = drawer.window->getSize();
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
@@ -97,26 +101,64 @@ void Maze::draw(Drawer& drawer, sf::Color wallColor, sf::Color cellColor) {
     for (size_t i = 0; i < maze.size(); ++i) {
         Cell cell = maze[i];
 
-        sf::Vector2u top_left       (cell.coord.x       * x_dim, cell.coord.y       * y_dim);
-        sf::Vector2u top_right      ((cell.coord.x + 1) * x_dim, cell.coord.y       * y_dim);
-        sf::Vector2u bottom_right   ((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
-        sf::Vector2u bottom_left    (cell.coord.x       * x_dim, (cell.coord.y + 1) * y_dim);
-        
-        sf::Color color = cellColor;
-        if (i == startCell_index)
-            color = sf::Color::Green;
-        else if (i == endCell_index)
-            color = sf::Color::Red;
+        sf::Vector2f top_left       (cell.coord.x       * x_dim, cell.coord.y       * y_dim);
+        sf::Vector2f top_right      ((cell.coord.x + 1) * x_dim, cell.coord.y       * y_dim);
+        sf::Vector2f bottom_right   ((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
+        sf::Vector2f bottom_left    (cell.coord.x       * x_dim, (cell.coord.y + 1) * y_dim);
 
-        drawer.drawRectangle(top_left, bottom_right, color);
+        sf::VertexArray wall(sf::Lines, 2);
 
-        if (cell.walls.top)
-            drawer.drawSegment(top_left, top_right, wallColor);
-        if (cell.walls.right)
-            drawer.drawSegment(top_right, bottom_right, wallColor);
-        if (cell.walls.bottom)
-            drawer.drawSegment(bottom_right, bottom_left, wallColor);
-        if (cell.walls.left)
-            drawer.drawSegment(bottom_left, top_left, wallColor);
+        if (cell.walls.top) {
+            wall[0] = top_left;
+            wall[1] = top_right;
+            walls.push_back(wall);
+        }
+        if (cell.walls.right) {
+            wall[0] = top_right;
+            wall[1] = bottom_right;
+            walls.push_back(wall);
+        }
+        if (cell.walls.bottom) {
+            wall[0] = bottom_right;
+            wall[1] = bottom_left;
+            walls.push_back(wall);
+        }
+        if (cell.walls.left) {
+            wall[0] = bottom_left;
+            wall[1] = top_left;
+            walls.push_back(wall);
+        }
     }
+}
+
+sf::Vector2i Maze::getStartPos(const Drawer& drawer) {
+    sf::Vector2u windowSize = drawer.window->getSize();
+    int x_dim = windowSize.x / dimension.x;
+    int y_dim = windowSize.y / dimension.y;
+
+    int x = maze[startCell_index].coord.x * x_dim + x_dim/2;
+    int y = maze[startCell_index].coord.y * y_dim + y_dim/2;
+
+    return {x, y};
+}
+
+void Maze::draw(Drawer& drawer, sf::Color wallColor) {
+    sf::Vector2u windowSize = drawer.window->getSize();
+    int x_dim = windowSize.x / dimension.x;
+    int y_dim = windowSize.y / dimension.y;
+
+    for (size_t i : {startCell_index, endCell_index}) {
+        Cell cell = maze[i];
+
+        sf::Vector2u top_left       (cell.coord.x       * x_dim, cell.coord.y       * y_dim);
+        sf::Vector2u bottom_right   ((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
+
+        if (i == startCell_index)
+            drawer.drawRectangle(top_left, bottom_right, sf::Color::Red);
+        else if (i == endCell_index)
+            drawer.drawRectangle(top_left, bottom_right, sf::Color::Green);
+    }
+
+    for (sf::VertexArray wall : walls)
+        drawer.drawSegment(wall[0].position, wall[1].position, wallColor);
 }

@@ -12,9 +12,9 @@ Drawer::~Drawer() {
     delete window;
 }
 
-void Drawer::eventHandler() {
+void Drawer::eventHandler(Maze& maze, Player& player) {
     sf::Event event;
-        
+
     while (window->pollEvent(event)) {
         switch (event.type) {
         case sf::Event::Closed:
@@ -22,14 +22,24 @@ void Drawer::eventHandler() {
             break;
 
         case sf::Event::KeyPressed:
-            if (event.key.code == sf::Keyboard::F11)
+            if (event.key.code == sf::Keyboard::F11 || event.key.code == sf::Keyboard::Escape)
                 toggleFullscreen();
             break;
 
         case sf::Event::Resized:
             {
+                sf::Vector2i newSize(event.size.width, event.size.height);
+                sf::Vector2i sizeDiff(windowSize.x - newSize.x, windowSize.y - newSize.y);
+
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window->setView(sf::View(visibleArea));
+
+                player.coord.x *= (float)newSize.x / windowSize.x;
+                player.coord.y *= (float)newSize.y / windowSize.y;
+
+                windowSize = {newSize.x, newSize.y};
+
+                maze.calculateWalls(*this);
             }
             break;
         
@@ -52,12 +62,12 @@ void Drawer::clearScreen(sf::Color color) {
     window->clear(color);
 }
 
-void Drawer::drawSegment(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::Color color) {
+void Drawer::drawSegment(const sf::Vector2f& p1, const sf::Vector2f& p2, sf::Color color) {
     sf::VertexArray line(sf::Lines, 2);
 
-    line[0].position = sf::Vector2f(p1.x, p1.y);
+    line[0].position = p1;
     line[0].color = color;
-    line[1].position = sf::Vector2f(p2.x, p2.y);
+    line[1].position = p2;
     line[1].color = color;
 
     window->draw(line);
@@ -76,4 +86,13 @@ void Drawer::drawRectangle(const sf::Vector2u& p1, const sf::Vector2u& p2, sf::C
     rectangle.setFillColor(color);
 
     window->draw(rectangle);
+}
+
+void Drawer::drawCircle(const sf::Vector2f& center, unsigned int radius, sf::Color color) {
+    sf::CircleShape circle(radius);
+
+    circle.setPosition(center.x - radius, center.y - radius);
+    circle.setFillColor(color);
+
+    window->draw(circle);
 }

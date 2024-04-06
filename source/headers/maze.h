@@ -1,7 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include "drawer.h"
+#include "global.h"
+
+class Player;
+class Drawer;
 
 class Cell {
 public:
@@ -29,8 +30,12 @@ private:
     void removeWalls(Cell* c1, Cell* c2);
 
 public:
+    std::vector<sf::VertexArray> walls;
+
     Maze(unsigned int width, unsigned int height);
-    void generate();
-    void draw(Drawer& drawer, sf::Color wallColor, sf::Color cellColor);
+    void generate(Drawer& drawer);
+    void calculateWalls(Drawer& drawer);
+    sf::Vector2i getStartPos(const Drawer& drawer);
+    void draw(Drawer& drawer, sf::Color wallColor);
 };
 
