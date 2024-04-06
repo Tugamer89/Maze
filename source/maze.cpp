@@ -97,10 +97,10 @@ void Maze::draw(Drawer& drawer, sf::Color wallColor, sf::Color cellColor) {
     for (size_t i = 0; i < maze.size(); ++i) {
         Cell cell = maze[i];
 
-        sf::Vector2u top_left(cell.coord.x * x_dim, cell.coord.y * y_dim);
-        sf::Vector2u top_right((cell.coord.x + 1) * x_dim, cell.coord.y * y_dim);
-        sf::Vector2u bottom_right((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
-        sf::Vector2u bottom_left(cell.coord.x * x_dim, (cell.coord.y + 1) * y_dim);
+        sf::Vector2u top_left       (cell.coord.x       * x_dim, cell.coord.y       * y_dim);
+        sf::Vector2u top_right      ((cell.coord.x + 1) * x_dim, cell.coord.y       * y_dim);
+        sf::Vector2u bottom_right   ((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
+        sf::Vector2u bottom_left    (cell.coord.x       * x_dim, (cell.coord.y + 1) * y_dim);
         
         sf::Color color = cellColor;
         if (i == startCell_index)

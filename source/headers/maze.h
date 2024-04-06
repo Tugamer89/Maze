@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <stack>
 #include "drawer.h"
 
 class Cell {
