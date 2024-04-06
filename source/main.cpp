@@ -1,6 +1,6 @@
 #include <iostream>
-#include "drawer.h"
-#include "maze.h"
+#include "headers/drawer.h"
+#include "headers/maze.h"
 
 using namespace std;
 
