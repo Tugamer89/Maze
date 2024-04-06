@@ -15,6 +15,9 @@ Maze::Maze(unsigned int width, unsigned int height) {
     for (int i = 0; i < height; ++i)
         for (int j = 0; j < width; ++j)
             maze.push_back(Cell(j, i));
+
+    startCell_index = 0;
+    endCell_index = maze.size()-1;
 }
 
 size_t Maze::index(int x, int y) {
@@ -91,13 +94,21 @@ void Maze::draw(Drawer& drawer, sf::Color wallColor, sf::Color cellColor) {
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
 
-    for (Cell cell : maze) {
+    for (size_t i = 0; i < maze.size(); ++i) {
+        Cell cell = maze[i];
+
         sf::Vector2u top_left(cell.coord.x * x_dim, cell.coord.y * y_dim);
         sf::Vector2u top_right((cell.coord.x + 1) * x_dim, cell.coord.y * y_dim);
         sf::Vector2u bottom_right((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
         sf::Vector2u bottom_left(cell.coord.x * x_dim, (cell.coord.y + 1) * y_dim);
         
-        drawer.drawRectangle(top_left, bottom_right, cellColor);
+        sf::Color color = cellColor;
+        if (i == startCell_index)
+            color = sf::Color::Green;
+        else if (i == endCell_index)
+            color = sf::Color::Red;
+
+        drawer.drawRectangle(top_left, bottom_right, color);
 
         if (cell.walls.top)
             drawer.drawSegment(top_left, top_right, wallColor);

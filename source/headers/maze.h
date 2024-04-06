@@ -22,6 +22,8 @@ class Maze {
 private:
     std::vector<Cell> maze;
     sf::Vector2u dimension;
+    size_t startCell_index;
+    size_t endCell_index;
 
     size_t index(int x, int y);
     bool randomNeighbor(sf::Vector2i coord, Cell*& choosen);
