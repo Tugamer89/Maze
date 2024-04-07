@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
         // TODO: 3D rendering
         drawer.drawRectangle({0, 0}, windowSize);
         maze.draw(drawer, sf::Color::Black);
-        player.drawVision(drawer, maze, sf::Color::Blue);
+        player.drawVision(drawer, sf::Color::Blue);
         player.draw(drawer, sf::Color::Magenta);
 
         drawer.window->display();

@@ -34,3 +34,17 @@ sf::Vector2f Ray::cast(sf::VertexArray wall) {
     point.y = y1 + t * (y2 - y1);
     return point;
 }
+
+void Ray::cast(vector<sf::VertexArray> walls) {
+    float closestDist = MAXFLOAT;
+
+    for (sf::VertexArray wall : walls) {
+        sf::Vector2f p = cast(wall);
+        float distance = sqrt(pow(p.x - center.x, 2) + pow(p.y - center.y, 2));
+
+        if (p != sf::Vector2f(-1, -1) && distance < closestDist) {
+            proiection = p;
+            closestDist = distance;
+        }
+    }
+}

@@ -1,7 +1,6 @@
 #pragma once
 #include "global.h"
 
-class Player;
 class Drawer;
 
 class Cell {

@@ -5,7 +5,7 @@ using namespace std;
 Player::Player(unsigned int x, unsigned int y, float speed_, float fov_) {
     coord.x = x;
     coord.y = y;
-    fov = fov_ * M_PI / 360;
+    fov = fov_ * M_PI / 180;
     speed = speed_;
     lookDir = 0;
 }
@@ -15,29 +15,22 @@ void Player::moveBy(sf::Vector2f vec) {
     coord.y += vec.y;
 }
 
-void Player::drawVision(Drawer& drawer, Maze& maze, sf::Color color) {
-    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += 1 * M_PI / 360) {
-        float ang = angle;
-        Ray ray(coord, ang);
+void Player::calculateRays(Maze& maze) {
+    rays.clear();
 
-        struct {
-            sf::Vector2f point = {-1, -1};
-            float dist = MAXFLOAT;
-        } closest;
+    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += 1 * M_PI / 180) {
+        Ray ray(coord, angle);
 
-        for (sf::VertexArray wall : maze.walls) {
-            sf::Vector2f p = ray.cast(wall);
-            float distance = sqrt(pow(p.x - coord.x, 2) + pow(p.y - coord.y, 2));
+        ray.cast(maze.walls);
 
-            if (p != sf::Vector2f(-1, -1) && distance < closest.dist) {
-                closest.point = p;
-                closest.dist = distance;
-            }
-        }
-
-        if (closest.point != sf::Vector2f(-1, -1))
-            drawer.drawSegment(coord, closest.point, color);
+        if (ray.proiection != sf::Vector2f(-1, -1))
+            rays.push_back(ray);
     }
+}
+
+void Player::drawVision(Drawer& drawer, sf::Color color) {
+    for (Ray ray : rays)
+        drawer.drawSegment(ray.center, ray.proiection, color);
 }
 
 void Player::draw(Drawer& drawer, sf::Color color) {
@@ -49,7 +42,7 @@ void Player::draw(Drawer& drawer, sf::Color color) {
 }
 
 void Player::update(Drawer& drawer, Maze& maze) {
-    cerr << lookDir * 180.f / M_PI << "\r";
+    //cerr << lookDir * 180.f / M_PI << "\r";
     sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
     lookDir = -atan2(mousePos.x - coord.x, mousePos.y - coord.y) + M_PI/2;
 
@@ -72,5 +65,12 @@ void Player::update(Drawer& drawer, Maze& maze) {
     movement.x *= drawer.window->getSize().x;
     movement.y *= drawer.window->getSize().y;
 
+    // TODO: check if it's ok to move
+
     moveBy(movement);
+    calculateRays(maze);
+}
+
+void Player::setFov(float newFov) {
+    fov = newFov * M_PI / 180;
 }
