@@ -60,14 +60,18 @@ void Player::update(Drawer& drawer, Maze& maze) {
     if (movement.x != 0 && movement.y != 0) {
         float oblqSpeed = sqrt(pow(speed, 2) / 2);
         movement = {oblqSpeed * movement.x / abs(movement.x), oblqSpeed * movement.y / abs(movement.y)};
+        movement.x *= drawer.window->getSize().x;
+        movement.y *= drawer.window->getSize().y;
+
+        // TODO: check if it's ok to move
+        Ray moveRay(coord, lookDir);
+        moveRay.cast(maze.walls);
+        if (moveRay.proiection != sf::Vector2f(-1, -1) && distance(coord, movement) >= distance(coord, moveRay.proiection))
+            movement = {coord.x - moveRay.proiection.x, coord.y - moveRay.proiection.y};
+
+        moveBy(movement);
     }
 
-    movement.x *= drawer.window->getSize().x;
-    movement.y *= drawer.window->getSize().y;
-
-    // TODO: check if it's ok to move
-
-    moveBy(movement);
     calculateRays(maze);
 }
 

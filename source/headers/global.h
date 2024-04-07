@@ -9,6 +9,9 @@
 #include "maze.h"
 #include "ray.h"
 
-class Drawer;
+class Ray;
 class Maze;
+class Drawer;
 class Player;
+
+float distance(sf::Vector2f p1, sf::Vector2f p2);

@@ -3,6 +3,7 @@
 using namespace std;
 
 Ray::Ray(sf::Vector2f center_, float angle_) {
+    proiection = {-1, -1};
     center = center_;
     angle = angle_;
 }
@@ -40,11 +41,11 @@ void Ray::cast(vector<sf::VertexArray> walls) {
 
     for (sf::VertexArray wall : walls) {
         sf::Vector2f p = cast(wall);
-        float distance = sqrt(pow(p.x - center.x, 2) + pow(p.y - center.y, 2));
+        float dist = distance(p, center);
 
-        if (p != sf::Vector2f(-1, -1) && distance < closestDist) {
+        if (p != sf::Vector2f(-1, -1) && dist < closestDist) {
             proiection = p;
-            closestDist = distance;
+            closestDist = dist;
         }
     }
 }
