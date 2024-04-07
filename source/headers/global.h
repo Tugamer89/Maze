@@ -7,6 +7,7 @@
 #include "drawer.h"
 #include "player.h"
 #include "maze.h"
+#include "ray.h"
 
 class Drawer;
 class Maze;

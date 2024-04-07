@@ -2,11 +2,12 @@
 
 using namespace std;
 
-Player::Player(unsigned int x, unsigned int y, float speed_) {
+Player::Player(unsigned int x, unsigned int y, float speed_, float fov_) {
     coord.x = x;
     coord.y = y;
+    fov = fov_ * M_PI / 360;
     speed = speed_;
-    angle = 0;
+    lookDir = 0;
 }
 
 void Player::moveBy(sf::Vector2f vec) {
@@ -14,19 +15,45 @@ void Player::moveBy(sf::Vector2f vec) {
     coord.y += vec.y;
 }
 
+void Player::drawVision(Drawer& drawer, Maze& maze, sf::Color color) {
+    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += 1 * M_PI / 360) {
+        float ang = angle;
+        Ray ray(coord, ang);
+
+        struct {
+            sf::Vector2f point = {-1, -1};
+            float dist = MAXFLOAT;
+        } closest;
+
+        for (sf::VertexArray wall : maze.walls) {
+            sf::Vector2f p = ray.cast(wall);
+            float distance = sqrt(pow(p.x - coord.x, 2) + pow(p.y - coord.y, 2));
+
+            if (p != sf::Vector2f(-1, -1) && distance < closest.dist) {
+                closest.point = p;
+                closest.dist = distance;
+            }
+        }
+
+        if (closest.point != sf::Vector2f(-1, -1))
+            drawer.drawSegment(coord, closest.point, color);
+    }
+}
+
 void Player::draw(Drawer& drawer, sf::Color color) {
     drawer.drawCircle(coord, 2, color);
 
     float r = 6;
-    sf::Vector2f p(coord.x + r*cos(angle), coord.y + r*sin(angle));
+    sf::Vector2f p(coord.x + r*cos(lookDir), coord.y + r*sin(lookDir));
     drawer.drawSegment(coord, p, color);
 }
 
 void Player::update(Drawer& drawer, Maze& maze) {
-    //cerr << angle * 180.f / M_PI << "\r";
+    cerr << lookDir * 180.f / M_PI << "\r";
     sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
-    angle = M_PI/2 - atan2(mousePos.x - coord.x, mousePos.y - coord.y);
-    
+    lookDir = -atan2(mousePos.x - coord.x, mousePos.y - coord.y) + M_PI/2;
+
+
     sf::Vector2f movement(0, 0);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
         movement.y -= speed;

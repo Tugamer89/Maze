@@ -1,12 +1,13 @@
 #include <iostream>
 #include "headers/drawer.h"
-#include "headers/maze.h"
 #include "headers/player.h"
+#include "headers/maze.h"
+#include "headers/ray.h"
 
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    Drawer drawer(400, 400, "The Tu-Maze");
+    Drawer drawer(600, 600, "The Tu-Maze");
 
     Maze maze(20, 20);
     maze.generate(drawer);
@@ -15,7 +16,8 @@ int main(int argc, char const *argv[]) {
     Player player(startPos.x, startPos.y);
 
     /*  GAME LOOP */
-    while (drawer.window->isOpen()) {
+    while (drawer.window->isOpen())
+    {
         drawer.eventHandler(maze, player);
 
         player.update(drawer, maze);
@@ -29,6 +31,7 @@ int main(int argc, char const *argv[]) {
         // TODO: 3D rendering
         drawer.drawRectangle({0, 0}, windowSize);
         maze.draw(drawer, sf::Color::Black);
+        player.drawVision(drawer, maze, sf::Color::Blue);
         player.draw(drawer, sf::Color::Magenta);
 
         drawer.window->display();

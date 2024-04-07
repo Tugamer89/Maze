@@ -91,6 +91,7 @@ void Maze::generate(Drawer& drawer) {
     calculateWalls(drawer);
 }
 
+// TODO: optimize number of walls
 void Maze::calculateWalls(Drawer& drawer) {
     walls.clear();
 
