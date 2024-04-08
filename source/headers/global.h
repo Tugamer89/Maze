@@ -15,3 +15,4 @@ class Drawer;
 class Player;
 
 float distance(sf::Vector2f p1, sf::Vector2f p2);
+float angleFromVec(sf::Vector2f vec);

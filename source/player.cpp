@@ -44,8 +44,7 @@ void Player::draw(Drawer& drawer, sf::Color color) {
 void Player::update(Drawer& drawer, Maze& maze) {
     //cerr << lookDir * 180.f / M_PI << "\r";
     sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
-    lookDir = -atan2(mousePos.x - coord.x, mousePos.y - coord.y) + M_PI/2;
-
+    lookDir = angleFromVec({mousePos.x - coord.x, mousePos.y - coord.y});
 
     sf::Vector2f movement(0, 0);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -60,17 +59,25 @@ void Player::update(Drawer& drawer, Maze& maze) {
     if (movement.x != 0 && movement.y != 0) {
         float oblqSpeed = sqrt(pow(speed, 2) / 2);
         movement = {oblqSpeed * movement.x / abs(movement.x), oblqSpeed * movement.y / abs(movement.y)};
+    }
+
+    if (movement != sf::Vector2f(0, 0)) {
         movement.x *= drawer.window->getSize().x;
         movement.y *= drawer.window->getSize().y;
-
-        // TODO: check if it's ok to move
-        Ray moveRay(coord, lookDir);
+        
+        Ray moveRay(coord, angleFromVec(movement));
         moveRay.cast(maze.walls);
-        if (moveRay.proiection != sf::Vector2f(-1, -1) && distance(coord, movement) >= distance(coord, moveRay.proiection))
-            movement = {coord.x - moveRay.proiection.x, coord.y - moveRay.proiection.y};
+
+        if (moveRay.proiection != sf::Vector2f(-1, -1) && distance(coord, moveRay.proiection) <= distance({0, 0}, movement))
+            movement = sf::Vector2f(0, 0);
 
         moveBy(movement);
     }
+
+    if (coord.x <= 0)
+        coord.x = 1;
+    if (coord.y <= 0)
+        coord.y = 1;
 
     calculateRays(maze);
 }
