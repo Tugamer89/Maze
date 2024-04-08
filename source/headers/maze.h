@@ -36,5 +36,6 @@ public:
     void calculateWalls(Drawer& drawer);
     sf::Vector2i getStartPos(const Drawer& drawer);
     void draw(Drawer& drawer, sf::Color wallColor);
+    bool hasWon(Player& player, Drawer& drawer);
 };
 

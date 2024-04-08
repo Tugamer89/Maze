@@ -96,3 +96,22 @@ void Drawer::drawCircle(const sf::Vector2f& center, unsigned int radius, sf::Col
 
     window->draw(circle);
 }
+
+void Drawer::drawText(const string& text, unsigned int size, sf::Vector2f pos, sf::Color color, sf::Text::Style style) {
+    sf::Text txt;
+    sf::Font font;
+
+    font.loadFromFile("OpenSans.ttf");
+    txt.setFont(font);
+
+    txt.setString(text);
+    txt.setCharacterSize(size);
+    txt.setFillColor(color);
+    txt.setStyle(style);
+
+    float x = (windowSize.x - txt.getLocalBounds().width) / 2;
+    float y = (windowSize.y - txt.getLocalBounds().height) / 2;
+    txt.setPosition(x, y);
+
+    window->draw(txt);
+}

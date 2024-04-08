@@ -163,3 +163,15 @@ void Maze::draw(Drawer& drawer, sf::Color wallColor) {
     for (sf::VertexArray wall : walls)
         drawer.drawSegment(wall[0].position, wall[1].position, wallColor);
 }
+
+bool Maze::hasWon(Player& player, Drawer& drawer) {
+    sf::Vector2u windowSize = drawer.window->getSize();
+    int x_dim = windowSize.x / dimension.x;
+    int y_dim = windowSize.y / dimension.y;
+
+    sf::Vector2u top_left       (maze[endCell_index].coord.x       * x_dim, maze[endCell_index].coord.y       * y_dim);
+    sf::Vector2u bottom_right   ((maze[endCell_index].coord.x + 1) * x_dim, (maze[endCell_index].coord.y + 1) * y_dim);    
+
+    return player.coord.x > top_left.x && player.coord.x < bottom_right.y && 
+           player.coord.y > top_left.x && player.coord.y < bottom_right.y;
+}

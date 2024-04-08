@@ -20,10 +20,13 @@ int main(int argc, char const *argv[]) {
     {
         drawer.eventHandler(maze, player);
 
-        player.update(drawer, maze);
+        bool won = maze.hasWon(player, drawer);
+
+        if (!won)
+            player.update(drawer, maze);
 
         sf::Vector2u windowSize = drawer.window->getSize();
-        sf::Vector2u center{windowSize.x/2, windowSize.y/2};
+        sf::Vector2f center{windowSize.x/2, windowSize.y/2};
         sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
 
         // Draw & Display
@@ -33,6 +36,9 @@ int main(int argc, char const *argv[]) {
         maze.draw(drawer, sf::Color::Black);
         player.drawVision(drawer, sf::Color::Blue);
         player.draw(drawer, sf::Color::Magenta);
+
+        if (won)
+            drawer.drawText("Victory!", windowSize.y/10, center);
 
         drawer.window->display();
     }
