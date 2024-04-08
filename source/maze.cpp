@@ -173,5 +173,5 @@ bool Maze::hasWon(Player& player, Drawer& drawer) {
     sf::Vector2u bottom_right   ((maze[endCell_index].coord.x + 1) * x_dim, (maze[endCell_index].coord.y + 1) * y_dim);    
 
     return player.coord.x > top_left.x && player.coord.x < bottom_right.y && 
-           player.coord.y > top_left.x && player.coord.y < bottom_right.y;
+           player.coord.y > top_left.y && player.coord.y < bottom_right.y;
 }
