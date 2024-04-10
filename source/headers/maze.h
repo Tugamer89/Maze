@@ -34,7 +34,7 @@ public:
     Maze(unsigned int width, unsigned int height);
     void generate(Drawer& drawer);
     void calculateWalls(Drawer& drawer);
-    sf::Vector2i getStartPos(const Drawer& drawer);
+    sf::Vector2i getStartPos(Drawer& drawer);
     void draw(Drawer& drawer, sf::Color wallColor);
     bool hasWon(Player& player, Drawer& drawer);
 };

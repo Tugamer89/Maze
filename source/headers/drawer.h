@@ -15,6 +15,7 @@ public:
     Drawer(unsigned int width, unsigned int height, const std::string& title_ = "");
     ~Drawer();
     
+    sf::Vector2u getMiniMapSize();
     void toggleFullscreen();
     void eventHandler(Maze& maze, Player& player);
     void clearScreen(sf::Color color = sf::Color::White);

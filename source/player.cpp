@@ -62,8 +62,8 @@ void Player::update(Drawer& drawer, Maze& maze) {
     }
 
     if (movement != sf::Vector2f(0, 0)) {
-        movement.x *= drawer.window->getSize().x;
-        movement.y *= drawer.window->getSize().y;
+        movement.x *= drawer.getMiniMapSize().x;
+        movement.y *= drawer.getMiniMapSize().y;
         
         Ray moveRay(coord, angleFromVec(movement));
         moveRay.cast(maze.walls);
@@ -84,4 +84,8 @@ void Player::update(Drawer& drawer, Maze& maze) {
 
 void Player::setFov(float newFov) {
     fov = newFov * M_PI / 180;
+}
+
+void Player::render3D(Drawer& drawer) {
+
 }

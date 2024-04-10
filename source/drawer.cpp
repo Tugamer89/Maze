@@ -12,6 +12,10 @@ Drawer::~Drawer() {
     delete window;
 }
 
+sf::Vector2u Drawer::getMiniMapSize() {
+    return {window->getSize().x/4, window->getSize().y/4};
+}
+
 void Drawer::eventHandler(Maze& maze, Player& player) {
     sf::Event event;
 

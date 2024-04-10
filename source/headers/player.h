@@ -23,4 +23,5 @@ public:
     void draw(Drawer& drawer,  sf::Color color);
     void update(Drawer& drawer, Maze& maze);
     void setFov(float newFov);
+    void render3D(Drawer& drawer);
 };

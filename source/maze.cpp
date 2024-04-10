@@ -95,7 +95,7 @@ void Maze::generate(Drawer& drawer) {
 void Maze::calculateWalls(Drawer& drawer) {
     walls.clear();
 
-    sf::Vector2u windowSize = drawer.window->getSize();
+    sf::Vector2u windowSize = drawer.getMiniMapSize();
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
 
@@ -132,8 +132,8 @@ void Maze::calculateWalls(Drawer& drawer) {
     }
 }
 
-sf::Vector2i Maze::getStartPos(const Drawer& drawer) {
-    sf::Vector2u windowSize = drawer.window->getSize();
+sf::Vector2i Maze::getStartPos(Drawer& drawer) {
+    sf::Vector2u windowSize = drawer.getMiniMapSize();
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
 
@@ -144,7 +144,7 @@ sf::Vector2i Maze::getStartPos(const Drawer& drawer) {
 }
 
 void Maze::draw(Drawer& drawer, sf::Color wallColor) {
-    sf::Vector2u windowSize = drawer.window->getSize();
+    sf::Vector2u windowSize = drawer.getMiniMapSize();
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
 
@@ -165,7 +165,7 @@ void Maze::draw(Drawer& drawer, sf::Color wallColor) {
 }
 
 bool Maze::hasWon(Player& player, Drawer& drawer) {
-    sf::Vector2u windowSize = drawer.window->getSize();
+    sf::Vector2u windowSize = drawer.getMiniMapSize();
     int x_dim = windowSize.x / dimension.x;
     int y_dim = windowSize.y / dimension.y;
 
