@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     Drawer drawer(600, 600, "The Tu-Maze");
 
-    Maze maze(5, 5);
+    Maze maze(20, 20);
     maze.generate(drawer);
 
     sf::Vector2i startPos = maze.getStartPos(drawer);
