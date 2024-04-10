@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "headers/drawer.h"
 #include "headers/player.h"
 #include "headers/maze.h"
@@ -9,11 +10,14 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     Drawer drawer(600, 600, "The Tu-Maze");
 
-    Maze maze(20, 20);
+    Maze maze(5, 5);
     maze.generate(drawer);
 
     sf::Vector2i startPos = maze.getStartPos(drawer);
     Player player(startPos.x, startPos.y);
+
+    auto startTime = chrono::high_resolution_clock::now();
+    unsigned long long frames = 0;
 
     /*  GAME LOOP */
     while (drawer.window->isOpen())
@@ -29,6 +33,10 @@ int main(int argc, char const *argv[]) {
         sf::Vector2f center{windowSize.x/2, windowSize.y/2};
         sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
 
+        auto nowTime = chrono::high_resolution_clock::now();
+        float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count();
+        int fps = ++frames / duration * 1000;
+
         // Draw & Display
         drawer.clearScreen(sf::Color::White);
         // TODO: 3D rendering
@@ -39,7 +47,7 @@ int main(int argc, char const *argv[]) {
 
         if (won)
             drawer.drawText("Victory!", windowSize.y/10, center);
-
+        drawer.drawText(to_string(fps), 10, {windowSize.x - 12, 4}, sf::Color::Green);
         drawer.window->display();
     }
 
