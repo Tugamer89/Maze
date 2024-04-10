@@ -34,8 +34,8 @@ int main(int argc, char const *argv[]) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
 
         auto nowTime = chrono::high_resolution_clock::now();
-        float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count();
-        int fps = ++frames / duration * 1000;
+        float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count() / 1000;
+        int fps = ++frames / duration;
 
         // Draw & Display
         drawer.clearScreen(sf::Color::White);
