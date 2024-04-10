@@ -109,8 +109,8 @@ void Drawer::drawText(const string& text, unsigned int size, sf::Vector2f pos, s
     txt.setFillColor(color);
     txt.setStyle(style);
 
-    float x = (windowSize.x - txt.getLocalBounds().width) / 2;
-    float y = (windowSize.y - txt.getLocalBounds().height) / 2;
+    float x = (pos.x - txt.getLocalBounds().width / 2);
+    float y = (pos.y - txt.getLocalBounds().height / 2);
     txt.setPosition(x, y);
 
     window->draw(txt);
