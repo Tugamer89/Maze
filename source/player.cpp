@@ -42,28 +42,20 @@ void Player::draw(Drawer& drawer, sf::Color color) {
 }
 
 void Player::update(Drawer& drawer, Maze& maze) {
-    //cerr << lookDir * 180.f / M_PI << "\r";
-    static sf::Vector2i prevMousePos = sf::Mouse::getPosition(*drawer.window);
-    sf::Vector2i windowCenter(drawer.window->getSize().x / 2, drawer.window->getSize().y / 2);
-    sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
+    float sens = 5 * M_PI / 180.f;
 
-    if (mousePos != prevMousePos) {
-        sf::Vector2i mouseDelta = mousePos - windowCenter;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        lookDir -= sens;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        lookDir += sens;
 
-        float sensitivity = 0.01f;
-        lookDir += sensitivity * mouseDelta.x * M_PI / 180.0f;
-
-        if (lookDir < 0)
-            lookDir += 2 * M_PI;
-        else if (lookDir > 2 * M_PI)
-            lookDir -= 2 * M_PI;
-
-        //sf::Mouse::setPosition(windowCenter, *drawer.window);
-        prevMousePos = mousePos;
-    }
+    if (lookDir < 0)
+        lookDir += 2 * M_PI;
+    else if (lookDir > 2 * M_PI)
+        lookDir -= 2 * M_PI;
 
     sf::Vector2f forwardMovement(cos(lookDir) * speed, sin(lookDir) * speed);
-    sf::Vector2f lateralMovement(-cos(lookDir) * speed, sin(lookDir) * speed);
+    sf::Vector2f lateralMovement(-sin(lookDir) * speed, cos(lookDir) * speed);
 
     sf::Vector2f movement(0, 0);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -74,11 +66,6 @@ void Player::update(Drawer& drawer, Maze& maze) {
         movement -= forwardMovement;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement += lateralMovement;
-
-    if (movement.x != 0 && movement.y != 0) {
-        float oblqSpeed = sqrt(pow(speed, 2) / 2);
-        movement = {oblqSpeed * movement.x / abs(movement.x), oblqSpeed * movement.y / abs(movement.y)};
-    }
 
     movement.x *= drawer.getMiniMapSize().x;
     movement.y *= drawer.getMiniMapSize().y;
@@ -93,11 +80,6 @@ void Player::update(Drawer& drawer, Maze& maze) {
         moveBy(movement);
     }
 
-    if (coord.x <= 0)
-        coord.x = 1;
-    if (coord.y <= 0)
-        coord.y = 1;
-
     calculateRays(maze);
 }
 
@@ -106,9 +88,8 @@ void Player::setFov(float newFov) {
 }
 
 void Player::render3D(Drawer& drawer) {
-    float maxRenderDistance = max(drawer.getMiniMapSize().x, drawer.getMiniMapSize().y) / 10;
+    float maxRenderDistance = max(drawer.getMiniMapSize().x, drawer.getMiniMapSize().y) / 5;
 
-    // TODO: this should be dynamic based on distance
     int width = drawer.window->getSize().x;
     int height = drawer.window->getSize().y;
 
@@ -119,9 +100,8 @@ void Player::render3D(Drawer& drawer) {
         
         float normalizedDistance = dist / maxRenderDistance;
         float maxBrightness = 255;
-        float brightness = exp(-0.5 * normalizedDistance);
-        brightness *= maxBrightness;
-        brightness = min(maxBrightness, brightness);
+        float brightness = (1.0f - normalizedDistance) * maxBrightness;
+        brightness = max(0.0f, min(maxBrightness, brightness));
         
         float normalizedBrightness = brightness / 255.0;
         float maxRayHeight = height / 2;

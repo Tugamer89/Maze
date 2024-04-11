@@ -91,7 +91,6 @@ void Maze::generate(Drawer& drawer) {
     calculateWalls(drawer);
 }
 
-// TODO: optimize number of walls
 void Maze::calculateWalls(Drawer& drawer) {
     walls.clear();
 
@@ -107,29 +106,36 @@ void Maze::calculateWalls(Drawer& drawer) {
         sf::Vector2f bottom_right   ((cell.coord.x + 1) * x_dim, (cell.coord.y + 1) * y_dim);
         sf::Vector2f bottom_left    (cell.coord.x       * x_dim, (cell.coord.y + 1) * y_dim);
 
-        sf::VertexArray wall(sf::Lines, 2);
+        if (cell.walls.top)
+            extendCombineWall(top_left, top_right, true);
+        if (cell.walls.right)
+            extendCombineWall(top_right, bottom_right, false);
+        if (cell.walls.bottom)
+            extendCombineWall(bottom_left, bottom_right, true);
+        if (cell.walls.left)
+            extendCombineWall(top_left, bottom_left, false);
+    }
+}
 
-        if (cell.walls.top) {
-            wall[0] = top_left;
-            wall[1] = top_right;
-            walls.push_back(wall);
+void Maze::extendCombineWall(const sf::Vector2f& start, const sf::Vector2f& end, bool isHorizontal) {
+    for (auto& wall : walls) {
+        sf::Vector2f wallDirection = wall[1].position - wall[0].position;
+        bool isWallHorizontal = wallDirection.y == 0;
+
+        if (wall[0].position == end && (isHorizontal == isWallHorizontal)) {
+            wall[0].position = start;
+            return;
         }
-        if (cell.walls.right) {
-            wall[0] = top_right;
-            wall[1] = bottom_right;
-            walls.push_back(wall);
-        }
-        if (cell.walls.bottom) {
-            wall[0] = bottom_right;
-            wall[1] = bottom_left;
-            walls.push_back(wall);
-        }
-        if (cell.walls.left) {
-            wall[0] = bottom_left;
-            wall[1] = top_left;
-            walls.push_back(wall);
+        if (wall[1].position == start && (isHorizontal == isWallHorizontal)) {
+            wall[1].position = end;
+            return;
         }
     }
+    
+    sf::VertexArray newWall(sf::Lines, 2);
+    newWall[0] = start;
+    newWall[1] = end;
+    walls.push_back(newWall);
 }
 
 sf::Vector2i Maze::getStartPos(Drawer& drawer) {

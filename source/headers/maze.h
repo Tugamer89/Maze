@@ -27,6 +27,7 @@ private:
     size_t index(int x, int y);
     bool randomNeighbor(sf::Vector2i coord, Cell*& choosen);
     void removeWalls(Cell* c1, Cell* c2);
+    void extendCombineWall(const sf::Vector2f& start, const sf::Vector2f& end, bool isHorizontal);
 
 public:
     std::vector<sf::VertexArray> walls;
