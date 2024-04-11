@@ -3,11 +3,10 @@
 
 class Ray {
 private:
-    float angle;
-
     sf::Vector2f cast(sf::VertexArray wall);
     
 public:
+    float angle;
     sf::Vector2f center;
     sf::Vector2f proiection;
 

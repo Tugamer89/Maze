@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     Drawer drawer(600, 600, "The Tu-Maze");
 
-    Maze maze(20, 20);
+    Maze maze(15, 15);
     maze.generate(drawer);
 
     sf::Vector2i startPos = maze.getStartPos(drawer);

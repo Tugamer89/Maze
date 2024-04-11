@@ -18,7 +18,7 @@ void Player::moveBy(sf::Vector2f vec) {
 void Player::calculateRays(Maze& maze) {
     rays.clear();
 
-    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += 1 * M_PI / 180) {
+    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += .5 * M_PI / 180) {
         Ray ray(coord, angle);
 
         ray.cast(maze.walls);
@@ -98,13 +98,16 @@ void Player::render3D(Drawer& drawer) {
 
         float dist =  distance(ray.center, ray.proiection);
         
-        float normalizedDistance = dist / maxRenderDistance;
+        float angleDifference = atan2(ray.proiection.y - coord.y, ray.proiection.x - coord.x) - lookDir;
+        angleDifference = atan2(sin(angleDifference), cos(angleDifference));
+        float correctedDistance = dist / cos(abs(angleDifference));
+
         float maxBrightness = 255;
-        float brightness = (1.0f - normalizedDistance) * maxBrightness;
+        float brightness = pow(1.0f - correctedDistance / maxRenderDistance, 1) * maxBrightness;
         brightness = max(15.0f, min(maxBrightness, brightness));
-        
+
         float normalizedBrightness = brightness / 255.0;
-        float maxRayHeight = height / 2;
+        float maxRayHeight = height;
         float minRayHeight = 1;
         float rayHeight = minRayHeight + normalizedBrightness * (maxRayHeight - minRayHeight);
 
