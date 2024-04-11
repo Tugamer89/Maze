@@ -40,6 +40,7 @@ int main(int argc, char const *argv[]) {
         // Draw & Display
         drawer.clearScreen(sf::Color::White);
         player.render3D(drawer);
+        drawer.drawRectangle({0, 0}, drawer.getMiniMapSize(), sf::Color::White);
         maze.draw(drawer, sf::Color::Black);
         player.drawVision(drawer, sf::Color::Blue);
         player.draw(drawer, sf::Color::Magenta);
