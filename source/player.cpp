@@ -101,7 +101,7 @@ void Player::render3D(Drawer& drawer) {
         float normalizedDistance = dist / maxRenderDistance;
         float maxBrightness = 255;
         float brightness = (1.0f - normalizedDistance) * maxBrightness;
-        brightness = max(0.0f, min(maxBrightness, brightness));
+        brightness = max(15.0f, min(maxBrightness, brightness));
         
         float normalizedBrightness = brightness / 255.0;
         float maxRayHeight = height / 2;
