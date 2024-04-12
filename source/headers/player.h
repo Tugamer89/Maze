@@ -17,7 +17,7 @@ private:
 public:
     sf::Vector2f coord;
 
-    Player(unsigned int x, unsigned int y, float speed = 0.01, float fov = 60);
+    Player(unsigned int x, unsigned int y, float speed = 0.0025, float fov = 100);
     void calculateRays(Maze& maze);
     void drawVision(Drawer& drawer, sf::Color color);
     void draw(Drawer& drawer,  sf::Color color);

@@ -18,13 +18,18 @@ void Player::moveBy(sf::Vector2f vec) {
 void Player::calculateRays(Maze& maze) {
     rays.clear();
 
-    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2; angle += .5 * M_PI / 180) {
+    // TODO: increase angle not constantly
+    const float numRays = 100;
+    const float angleIncrement = fov/numRays;
+    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2;) {
         Ray ray(coord, angle);
 
         ray.cast(maze.walls);
 
         if (ray.proiection != sf::Vector2f(-1, -1))
             rays.push_back(ray);
+
+        angle += angleIncrement;
     }
 }
 
@@ -98,18 +103,20 @@ void Player::render3D(Drawer& drawer) {
 
         float dist =  distance(ray.center, ray.proiection);
         
-        float angleDifference = atan2(ray.proiection.y - coord.y, ray.proiection.x - coord.x) - lookDir;
-        angleDifference = atan2(sin(angleDifference), cos(angleDifference));
-        float correctedDistance = dist / cos(abs(angleDifference));
+        float angleDifference = lookDir - ray.angle;
+        float correctedDistance = dist * cos(angleDifference);
 
         float maxBrightness = 255;
-        float brightness = pow(1.0f - correctedDistance / maxRenderDistance, 1) * maxBrightness;
-        brightness = max(15.0f, min(maxBrightness, brightness));
+        float minBrightness = 50;
+        float brightness = log(correctedDistance) / log(1.03) / (maxBrightness - minBrightness) * maxBrightness + minBrightness;
+        brightness = maxBrightness - brightness;
+        brightness = max(minBrightness, brightness);
+        brightness = min(maxBrightness, brightness);
 
-        float normalizedBrightness = brightness / 255.0;
         float maxRayHeight = height;
-        float minRayHeight = 1;
-        float rayHeight = minRayHeight + normalizedBrightness * (maxRayHeight - minRayHeight);
+        float minRayHeight = 80;
+        float rayHeight = minRayHeight + (maxRayHeight - minRayHeight) / correctedDistance;
+        rayHeight = min(maxRayHeight, rayHeight);
 
         sf::Vector2u top_left(i * width / rays.size(), height / 2 - rayHeight / 2);
         sf::Vector2u bottom_right((i + 1) * width / rays.size(), height / 2 + rayHeight / 2);
