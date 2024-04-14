@@ -10,7 +10,7 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    Drawer drawer(600, 600, "The Tu-Maze");
+    Drawer drawer(700, 700, "The Tu-Maze");
 
     Maze maze(15, 15);
     maze.generate(drawer);
@@ -28,19 +28,17 @@ int main(int argc, char const *argv[]) {
     {
         drawer.eventHandler(maze, player);
 
-        bool won = maze.hasWon(player, drawer);
-
-        if (!won)
-            player.update(drawer, maze);
-
         sf::Vector2u windowSize = drawer.window->getSize();
         sf::Vector2f center{windowSize.x/2, windowSize.y/2};
-        sf::Vector2i mousePos = sf::Mouse::getPosition(*drawer.window);
 
+        bool won = maze.hasWon(player, drawer);
         auto nowTime = chrono::high_resolution_clock::now();
         float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count() / 1000.f;
         startTime = nowTime;
         int fps;
+
+        if (!won)
+            player.update(drawer, maze, duration);
         
         if (duration > 0.0f) {
             frameTimes.push(duration);

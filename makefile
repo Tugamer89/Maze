@@ -1,5 +1,5 @@
 compile:
-	g++ ./source/*.cpp -o maze -lsfml-graphics -lsfml-window -lsfml-system -Wno-narrowing
+	g++ ./source/*.cpp -lsfml-graphics -lsfml-window -lsfml-system -Wno-narrowing -O3 -o maze
 
 run:
 	./maze

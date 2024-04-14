@@ -2,11 +2,12 @@
 
 using namespace std;
 
-Player::Player(unsigned int x, unsigned int y, float speed_, float fov_) {
+Player::Player(unsigned int x, unsigned int y, float speed_, float lookSens_, float fov_) {
     coord.x = x;
     coord.y = y;
     fov = fov_ * M_PI / 180;
     speed = speed_;
+    lookSens = lookSens_;
     lookDir = 0;
 }
 
@@ -18,18 +19,15 @@ void Player::moveBy(sf::Vector2f vec) {
 void Player::calculateRays(Maze& maze) {
     rays.clear();
 
-    // TODO: increase angle not constantly
     const float numRays = 100;
-    const float angleIncrement = fov/numRays;
-    for (float angle = lookDir - fov/2; angle <= lookDir + fov/2;) {
-        Ray ray(coord, angle);
-
+    const float screenDist = 50;
+    const float d = 2 * screenDist * tan(fov/2) / numRays;
+    for (int i = numRays / 2; i > - numRays / 2; --i) {
+        const float angle = atan2(d*i, screenDist);
+        Ray ray(coord, lookDir - angle);
         ray.cast(maze.walls);
-
         if (ray.proiection != sf::Vector2f(-1, -1))
             rays.push_back(ray);
-
-        angle += angleIncrement;
     }
 }
 
@@ -46,8 +44,8 @@ void Player::draw(Drawer& drawer, sf::Color color) {
     drawer.drawSegment(coord, p, color);
 }
 
-void Player::update(Drawer& drawer, Maze& maze) {
-    float sens = 5 * M_PI / 180.f;
+void Player::update(Drawer& drawer, Maze& maze, float delta) {
+    float sens = lookSens * M_PI / 180.f * delta;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         lookDir -= sens;
@@ -72,9 +70,9 @@ void Player::update(Drawer& drawer, Maze& maze) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement += lateralMovement;
 
-    movement.x *= drawer.getMiniMapSize().x;
-    movement.y *= drawer.getMiniMapSize().y;
-        
+    movement.x *= drawer.getMiniMapSize().x * delta;
+    movement.y *= drawer.getMiniMapSize().y * delta;
+
     if (movement != sf::Vector2f(0, 0)) {
         Ray moveRay(coord, angleFromVec(movement));
         moveRay.cast(maze.walls);
