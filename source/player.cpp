@@ -93,8 +93,6 @@ void Player::setFov(float newFov) {
 }
 
 void Player::render3D(Drawer& drawer) {
-    float maxRenderDistance = max(drawer.getMiniMapSize().x, drawer.getMiniMapSize().y) / 5;
-
     int width = drawer.window->getSize().x;
     int height = drawer.window->getSize().y;
 
