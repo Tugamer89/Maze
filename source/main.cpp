@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
     sf::Vector2i startPos = maze.getStartPos(drawer);
     Player player(startPos.x, startPos.y);
 
-    auto startTime = chrono::high_resolution_clock::now();
+    auto oldTime = chrono::high_resolution_clock::now();
     const int FPS_WINDOW_SIZE = 120;
     float totalFrameTime = 0.0f;
     queue<float> frameTimes;
@@ -33,8 +33,8 @@ int main(int argc, char const *argv[]) {
 
         bool won = maze.hasWon(player, drawer);
         auto nowTime = chrono::high_resolution_clock::now();
-        float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count() / 1000.f;
-        startTime = nowTime;
+        float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - oldTime).count() / 1000.f;
+        oldTime = nowTime;
         int fps;
 
         if (!won)
