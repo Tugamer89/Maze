@@ -19,9 +19,11 @@ int main(int argc, char const *argv[]) {
     Player player(startPos.x, startPos.y);
 
     auto oldTime = chrono::high_resolution_clock::now();
+    auto startTime = oldTime;
     const int FPS_WINDOW_SIZE = 120;
     float totalFrameTime = 0.0f;
     queue<float> frameTimes;
+    float elapsedTime;
 
     /*  GAME LOOP */
     while (drawer.window->isOpen())
@@ -33,6 +35,8 @@ int main(int argc, char const *argv[]) {
 
         bool won = maze.hasWon(player, drawer);
         auto nowTime = chrono::high_resolution_clock::now();
+        if (!won)
+            elapsedTime = chrono::duration_cast<chrono::milliseconds>(nowTime - startTime).count();
         float duration = chrono::duration_cast<chrono::milliseconds>(nowTime - oldTime).count() / 1000.f;
         oldTime = nowTime;
         int fps;
@@ -66,7 +70,8 @@ int main(int argc, char const *argv[]) {
         drawer.drawSegment(sf::Vector2f(center.x, center.y - crossSize), sf::Vector2f(center.x, center.y + crossSize), sf::Color::Red);
 
         if (won)
-            drawer.drawText("Victory!", windowSize.y/10, center);
+            drawer.drawText("Victory!", windowSize.y/10, center, sf::Color::Black);
+        drawer.drawText(msToText(elapsedTime), 30, {center.x, 15}, sf::Color::Black);
         drawer.drawText(to_string(fps), 10, {windowSize.x - 12, 4}, sf::Color::Black);
         drawer.window->display();
     }
