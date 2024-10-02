@@ -12,6 +12,10 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     Drawer drawer(700, 700, "The Tu-Maze");
 
+    unsigned int seed = static_cast<unsigned int>(time(0));
+    srand(seed);
+    cout << "Seed: " << seed << endl;
+
     Maze maze(15, 15);
     maze.generate(drawer);
 
