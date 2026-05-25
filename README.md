@@ -19,7 +19,7 @@ To build this project, you will need:
 1. Clone the repository:
 
    ```bash
-   git clone [https://github.com/Tugamer89/Maze.git](https://github.com/Tugamer89/Maze.git)
+   git clone https://github.com/Tugamer89/Maze.git
    cd Maze
    ```
 
